@@ -198,13 +198,18 @@
       const adminButton=document.getElementById('admin-open'); if(adminButton)adminButton.onclick=()=>location.assign(`/admin${location.search}${location.hash}`);
     }
   }
+  let profileSyncAttempts=0;
   async function syncProfile(){
-    if(!telegramInitData()) return;
-    try{const response=await fetch('/api/profile',{headers:authHeaders()});if(response.ok)applyProfile(await response.json())}catch{}
+    const initData=telegramInitData();
+    if(!initData){if(profileSyncAttempts++<12)setTimeout(syncProfile,500);return}
+    try{const response=await fetch('/api/profile',{headers:authHeaders()});if(response.ok){applyProfile(await response.json());profileSyncAttempts=99;return}}catch{}
+    if(profileSyncAttempts++<12)setTimeout(syncProfile,750);
   }
   const initialUser=telegramUser();
   if(initialUser) applyProfile({id:String(initialUser.id),username:initialUser.username,firstName:initialUser.first_name,photoUrl:initialUser.photo_url,balance:st.balance});
+  window.Telegram?.WebApp?.ready?.();
   syncProfile();
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncProfile()});
   setInterval(syncRound,1000);
   enhanceGame(); enhanceBonus();
 })();
