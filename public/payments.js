@@ -71,6 +71,7 @@ function watchInvoice(id) {
 }
 if (depositButton && depositDialog) {
   depositButton.removeAttribute('data-info');
+  depositButton.onclick = null;
   depositButton.addEventListener('click', () => { depositStatus.textContent = ''; depositDialog.showModal(); });
   document.getElementById('deposit-create').addEventListener('click', async event => {
     const amount = Number(document.getElementById('deposit-amount').value);
@@ -92,6 +93,7 @@ if (depositButton && depositDialog) {
 const withdrawDialog = document.getElementById('withdraw-dialog'), withdrawStatus = document.getElementById('withdraw-status');
 if (withdrawHeaderButton && withdrawDialog) {
   withdrawHeaderButton.removeAttribute('data-info');
+  withdrawHeaderButton.onclick = null;
   withdrawHeaderButton.addEventListener('click', () => {
     withdrawStatus.textContent = latestWager > 0.000001 ? `Для вывода осталось отыграть $${latestWager.toFixed(2)}.` : '';
     document.getElementById('withdraw-create').disabled = latestWager > 0.000001; withdrawDialog.showModal();
