@@ -52,7 +52,7 @@ function verifyTelegram(initData) {
   const received = params.get('hash');
   params.delete('hash'); params.delete('signature');
   const authDate = Number(params.get('auth_date'));
-  if (!received || !authDate || Math.abs(Date.now() / 1000 - authDate) > 3600) return null;
+  if (!received || !authDate || Math.abs(Date.now() / 1000 - authDate) > 86400) return null;
   const check = [...params.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => `${k}=${v}`).join('\n');
   const secret = createHmac('sha256', 'WebAppData').update(process.env.TELEGRAM_BOT_TOKEN).digest();
   const expected = createHmac('sha256', secret).update(check).digest('hex');
@@ -61,7 +61,7 @@ function verifyTelegram(initData) {
   try { return JSON.parse(params.get('user')); } catch { return null; }
 }
 const userFrom = req => verifyTelegram(req.headers['x-telegram-init-data']);
-const isAdmin = user => Boolean(user?.id && process.env.ADMIN_ID && String(user.id) === String(process.env.ADMIN_ID));
+const isAdmin = user => Boolean(user?.id && String(process.env.ADMIN_ID || '').split(',').map(id => id.trim()).includes(String(user.id)));
 const account = id => {
   const value = db.users[id] ||= { balance: '0.000000', wagerRemaining: '0.000000', creditedInvoices: [], redeemedPromos: [] };
   value.creditedInvoices ||= [];
