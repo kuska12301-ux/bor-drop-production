@@ -52,7 +52,7 @@ function verifyTelegram(initData) {
   const received = params.get('hash');
   params.delete('hash'); params.delete('signature');
   const authDate = Number(params.get('auth_date'));
-  if (!received || !authDate || Math.abs(Date.now() / 1000 - authDate) > 86400) return null;
+  if (!received || !authDate || Math.abs(Date.now() / 1000 - authDate) > 604800) return null;
   const check = [...params.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => `${k}=${v}`).join('\n');
   const secret = createHmac('sha256', 'WebAppData').update(process.env.TELEGRAM_BOT_TOKEN).digest();
   const expected = createHmac('sha256', secret).update(check).digest('hex');
