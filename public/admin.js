@@ -1,4 +1,4 @@
-const initData = window.Telegram?.WebApp?.initData || '';
+const initData = window.Telegram?.WebApp?.initData || new URLSearchParams(location.hash.replace(/^#/, '')).get('tgWebAppData') || new URLSearchParams(location.search).get('tgWebAppData') || '';
 const headers = { 'Content-Type': 'application/json', 'X-Telegram-Init-Data': initData };
 const status = document.getElementById('status');
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
